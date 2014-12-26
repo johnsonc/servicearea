@@ -4,7 +4,7 @@
       var shapes = new Array();
 
       function submitForm(event) {
-        // Manage submit form
+        // Manage submit form and some errors
         var $msg = $('.messages');
         $msg.empty();
 
@@ -13,7 +13,7 @@
           url: "/api/areas/",
           data: { name: $(this).find('#name').val(), poly: encodeMPoly()}
         })
-        // Basic Message Handling
+        // Message Handling
         .success(function(){
           $msg.append($('<div class="alert alert-success">Area successfully saved!.</div>'));
         })
@@ -130,8 +130,6 @@
         google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
         google.maps.event.addListener(map, 'click', clearSelection);
 
-        // set submit events
-        $('#form-area').submit(submitForm);
       }
       google.maps.event.addDomListener(window, 'load', initialize);
 

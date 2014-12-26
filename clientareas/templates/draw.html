@@ -3,6 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
+        <h3>Create your "Sevice Areas" by clicking on the map. (double click to finish an area)</h3>
         <div id="map_canvas"></div>
     </div>
 </div>
@@ -19,6 +20,7 @@
                 <textarea name="poly"rows="4" cols="50" placeholder="Polygon" class="form-control" id="poly" readonly="true"></textarea>
             </div>
             <input type="submit" value="Save" class="btn btn-success"/>
+            <a value="Save" class="btn btn-default" href="{% url 'draw' %}">Clear</a>
         </form>
     </div>
 </div>

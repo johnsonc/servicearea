@@ -1,5 +1,8 @@
-#map_canvas {
+.container > div.row{
     margin-top: 4em;
+}
+
+#map_canvas {
     /* using px to fit min mobile sizes */
     min-height: 420px;
     min-width: 320px;

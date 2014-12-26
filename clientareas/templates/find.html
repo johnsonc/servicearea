@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h3>Click on the map to search "Sevice Areas"</h3>
+        <div id="map_canvas"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Service Areas:</h2>
+        <div class="messages">
+        </div>
+        <div class="results">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{block.super}}
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing">
+    </script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/find.js">
+    </script>
+
+{% endblock %}
