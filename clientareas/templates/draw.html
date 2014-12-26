@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div id="map_canvas"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <form action="." method="POST">
+            <div class="form-group">
+                <input type="text" value="" placeholder="Area name" class="form-control"/>
+            </div>
+            <input type="submit" value="Save" class="btn btn-success"/>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{block.super}}
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing">
+    </script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/draw.js">
+    </script>
+
+{% endblock %}
