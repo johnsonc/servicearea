@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div id="map_canvas"></div>
+{% endblock %}
+
+{% block js %}
+    {{block.super}}
+
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing">
+    </script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/draw.js">
+    </script>
+
+{% endblock %}

@@ -1,0 +1,6 @@
+#map_canvas {
+    margin-top: 4em;
+    /* using px to fit min mobile sizes */
+    min-height: 420px;
+    min-width: 320px;
+}

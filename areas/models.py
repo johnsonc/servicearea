@@ -2,13 +2,13 @@ from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
 
-class Areas(models.Model):
+class Area(models.Model):
     """
-    Areas model save users areas.
+    Area model save users areas.
     This models use GeoDjango to improve search time.
     """
     user = models.ForeignKey(User, blank=True, null=True)
-    name = models.CharField(max_length=5)
+    name = models.CharField(max_length=128)
     poly = models.PolygonField()
     created = models.DateTimeField(auto_now_add=True)
 
