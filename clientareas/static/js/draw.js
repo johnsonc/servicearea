@@ -5,16 +5,21 @@
           shapes = new Array();
 
       function submitForm(event) {
-        // Manage submit form
+        /*
+        Manage submit form and perform object creation on the Backend
+        This function also perform some basis error handling in the form.
+        */
+        // clear exsiting messages if any
         var $msg = $('.messages');
         $msg.empty();
-
+        // Perform ajax call to Backend with the name of the area and the encoded string
+        // of the MultiPolygon (in json)
         $.ajax({
           type: "POST",
           url: "/api/areas/",
           data: { name: $(this).find('#name').val(), mpoly: encodeMPoly()}
         })
-        // Basic Message Handling
+        // Basic Message Handling for success and fail
         .success(function(){
           $msg.append($('<div class="alert alert-success">Area successfully saved!.</div>'));
         })
@@ -31,16 +36,22 @@
       }
 
       function encodeMPoly () {
+        /*
+        Encode shapes array from a list of Google Maps shapes to a MultiPolygon
+        geoJson object
+        */
         // return empty string if there's not shapes
         if (!shapes || shapes.length == 0) {
           return ''
         }
-        // Create coordinates array for multi polygons
+        // Create coordinates array for multi polygons using areas array
         var coords = new Array();
+        // Iterate shapes
         for(var i=0; i<shapes.length; i++) {
           var shapeCoords = new Array(),
               shape = shapes[i],
               path = shape.getPath();
+          // iterate the path of each shape
           for (var j=0; j<path.length; j++) {
             var xy = path.getAt(j);
             shapeCoords.push([xy.lng(), xy.lat()])
@@ -52,7 +63,7 @@
           }
           coords.push([shapeCoords]);
         }
-        // Create MultiPolygon object to be saved
+        // Create MultiPolygon object and transform it to string
         return JSON.stringify({
             "type": "MultiPolygon",
             "coordinates": coords
@@ -60,6 +71,9 @@
       }
 
       function listPoints () {
+        /*
+        Create a list of Points on the DOM using the shapes array
+        */
         var $points = $('.points');
 
         for(var i=0; i<shapes.length; i++) {
@@ -83,24 +97,21 @@
       }
 
       function setSelection(shape) {
+        /*
+        Update shapes array when a shape is create or selected
+        */
         clearSelection();
         selectedShape = shape;
         shape.setEditable(true);
-        window.shape = selectedShape;
         if (shapes.indexOf(shape) == -1) {
           shapes.push(shape);
         }
-        // Print polygons on area
+        // Print polygons on the DOM
         listPoints();
       }
 
-      function deleteSelectedShape() {
-        if (selectedShape) {
-          selectedShape.setMap(null);
-        }
-      }
-
       function initialize() {
+        // Create Google Map map
         map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 10,
           center: new google.maps.LatLng(22.344, 114.048),
@@ -114,8 +125,7 @@
           fillOpacity: 0.45,
           editable: true
         };
-        // Creates a drawing manager attached to the map that allows the user to draw
-        // markers, lines, and shapes.
+        // Creates a drawing manager attached to the map that allows the user to draw shapes.
         drawingManager = new google.maps.drawing.DrawingManager({
           drawingMode: google.maps.drawing.OverlayType.POLYGON,
           drawingControlOptions: {
@@ -128,6 +138,7 @@
           map: map
         });
 
+        // Add an event listener for shape completed
         google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
            if (e.type != google.maps.drawing.OverlayType.MARKER) {
 
@@ -149,7 +160,7 @@
         // set submit events
         $('#form-area').submit(submitForm);
       }
+      // Initialize map
       google.maps.event.addDomListener(window, 'load', initialize);
-
 
 })();

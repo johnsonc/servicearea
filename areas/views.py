@@ -7,6 +7,10 @@ from areas.models import Area
 
 
 class AreaSerializer(GeoFeatureModelSerializer):
+    """
+    Using GeoFeatureModelSerializer class to simplify area seralization.
+    This serializer is fully compatible with geoJson.
+    """
     class Meta:
         model = Area
         fields = ('name', 'created', 'user')
@@ -22,6 +26,8 @@ class AreaViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
+        Support query string: lat and lng
+        to find all matching Areas that contains that point
         """
         queryset = Area.objects.all()
         lat = self.request.QUERY_PARAMS.get('lat', None)

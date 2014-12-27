@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class Area(models.Model):
     """
-    Area model save users areas.
-    This models use GeoDjango to improve search time.
+    This model store all users areas using Geo Django.
+    GeoDjango is used to improve search time and other GIS operations
     """
     user = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=128)
