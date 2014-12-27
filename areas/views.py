@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 from django.contrib.gis.geos import Point
 from rest_framework import routers, serializers, viewsets
+from rest_framework.response import Response
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from areas.models import Area
 
@@ -30,3 +31,4 @@ class AreaViewSet(viewsets.ModelViewSet):
             point = Point(float(lng), float(lat))
             queryset = queryset.filter(mpoly__contains=point)
         return queryset
+

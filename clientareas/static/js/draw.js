@@ -1,7 +1,8 @@
 (function(){
-      var drawingManager;
-      var selectedShape;
-      var shapes = new Array();
+      var drawingManager,
+          selectedShape,
+          map,
+          shapes = new Array();
 
       function submitForm(event) {
         // Manage submit form
@@ -11,7 +12,7 @@
         $.ajax({
           type: "POST",
           url: "/api/areas/",
-          data: { name: $(this).find('#name').val(), poly: encodeMPoly()}
+          data: { name: $(this).find('#name').val(), mpoly: encodeMPoly()}
         })
         // Basic Message Handling
         .success(function(){
@@ -19,7 +20,9 @@
         })
         .fail(function(data){
           if(data.status == 400){
-            $msg.append($('<div class="alert alert-danger">Name field is required.</div>'));
+            $.each(data.responseJSON, function( key, value ) {
+              $msg.append($('<div class="alert alert-danger">'+key+': '+value+'</div>'));
+            });
           }else{
             $msg.append($('<div class="alert alert-danger">Create a valid area.</div>'));
           }
@@ -28,32 +31,48 @@
       }
 
       function encodeMPoly () {
-        // FIXME: replace this manual encoder by a library
-        // I will use for now this because the time constrain of the test
-        var str = "MULTIPOLYGON (";
+        // return empty string if there's not shapes
+        if (!shapes || shapes.length == 0) {
+          return ''
+        }
+        // Create coordinates array for multi polygons
+        var coords = new Array();
         for(var i=0; i<shapes.length; i++) {
-          var shape = shapes[i];
-          var path = shape.getPath();
-          str += "(("
+          var shapeCoords = new Array(),
+              shape = shapes[i],
+              path = shape.getPath();
           for (var j=0; j<path.length; j++) {
             var xy = path.getAt(j);
-            str += xy.lng().toFixed(16) +" " + xy.lat().toFixed(16);
-            // if loop is not over add a ','
-            str += ", "
+            shapeCoords.push([xy.lng(), xy.lat()])
             if (j+1 >= path.length) {
               // First item must be the last item
               xy = path.getAt(0);
-              str += xy.lng().toFixed(16) + " " + xy.lat().toFixed(16);
+              shapeCoords.push([xy.lng(), xy.lat()])
             }
           }
-          str += "))"
-          // if loop is not over add a ','
-          if (i+1 < shapes.length) {
-            str += ", "
+          coords.push([shapeCoords]);
+        }
+        // Create MultiPolygon object to be saved
+        return JSON.stringify({
+            "type": "MultiPolygon",
+            "coordinates": coords
+        });
+      }
+
+      function listPoints () {
+        var $points = $('.points');
+
+        for(var i=0; i<shapes.length; i++) {
+          $('<h4>Polygon</h4>').appendTo($points);
+          var $shape = $('<ul>'),
+              shape = shapes[i],
+              path = shape.getPath();
+          $shape.appendTo($points);
+          for (var j=0; j<path.length; j++) {
+            var xy = path.getAt(j);
+            $('<li>'+xy.lng()+', '+xy.lat()+'</li>').appendTo($shape);
           }
         }
-        str += ")"
-        return str
       }
 
       function clearSelection() {
@@ -72,7 +91,7 @@
           shapes.push(shape);
         }
         // Print polygons on area
-        $('#poly').val(encodeMPoly());
+        listPoints();
       }
 
       function deleteSelectedShape() {
@@ -82,7 +101,7 @@
       }
 
       function initialize() {
-        var map = new google.maps.Map(document.getElementById('map_canvas'), {
+        map = new google.maps.Map(document.getElementById('map_canvas'), {
           zoom: 10,
           center: new google.maps.LatLng(22.344, 114.048),
           mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -111,8 +130,6 @@
 
         google.maps.event.addListener(drawingManager, 'overlaycomplete', function(e) {
            if (e.type != google.maps.drawing.OverlayType.MARKER) {
-            // Switch back to non-drawing mode after drawing a shape.
-            drawingManager.setDrawingMode(null);
 
             // Add an event listener that selects the newly-drawn shape when the user
             // mouses down on it.
@@ -127,7 +144,6 @@
 
         // Clear the current selection when the drawing mode is changed, or when the
         // map is clicked.
-        google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
         google.maps.event.addListener(map, 'click', clearSelection);
 
         // set submit events
