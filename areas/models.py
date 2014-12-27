@@ -9,7 +9,7 @@ class Area(models.Model):
     """
     user = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=128)
-    poly = models.MultiPolygonField()
+    mpoly = models.MultiPolygonField(srid=4326)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = models.GeoManager()
