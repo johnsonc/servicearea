@@ -12,6 +12,9 @@ Goals:
 
 ## Usage:
 
+### See Prototype:
+http://rafen.webfactional.com/
+
 ### Drawing Page:
 On the drawing page ('/') the user can use Google Maps standard drawing tool to draw Polygons.
 After doing that the user needs to specify a name for the Polygon created using the form at the bottom of the page.
